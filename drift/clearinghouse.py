@@ -22,6 +22,21 @@ class ClearingHouseUser:
         self.position = await self.drift.load_account('UserPositions', self.user_positions_account())
         position_df = pd.DataFrame(self.position.positions)
         position_df = position_df[position_df.baseAssetAmount!=0]
+        
+        for x in ['quoteAssetAmount']:
+            position_df[x] /= 1e6
+            position_df[x] = position_df[x].round(2)
+        for x in ['baseAssetAmount']:
+            position_df[x] /= 1e13
+        for x in ['lastCumulativeFundingRate']:
+            position_df[x] /= 1e14
+            
+        position_df = position_df[['marketIndex', 'baseAssetAmount', 'quoteAssetAmount', 'lastCumulativeFundingRate']]
+
+
+        # for x in ['markPriceAfter','markPriceBefore','oraclePrice']:
+        #     trdf[x] /= 1e10
+        
         return position_df
 
 

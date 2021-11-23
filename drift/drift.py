@@ -8,15 +8,28 @@ import os
 import pandas as pd
 import numpy as np
 
-# use mainnet
-os.environ['ANCHOR_PROVIDER_URL'] = 'https://drift.genesysgo.net'
-
 IDL_FILE = './drift/clearing_house.json'
 
 # program and state account of clearing house program
 CH_PID = 'dammHkt7jmytvbS3nHTxQNEcP59aE57nxwV21YdqEDN'
 CH_SID = 'FExhvPycCCwYnZGeDsVtLhpEQ3yEkVY2k1HuPyfLj91L'
 
+def load_config():
+    #todo
+    if os.path.exists('config.txt'):
+        return pd.read_csv('config.txt', header=None).values[0][0]
+    else:
+        return ''
+
+def load_provider():
+    #todo
+    if os.path.exists('config.txt'):
+        return pd.read_csv('config.txt', header=None).values[1][0]
+    else:
+        return 'https://api.mainnet-beta.solana.com/'
+
+os.environ['ANCHOR_PROVIDER_URL'] = load_provider()
+    
 class Drift:
     def __init__(self, USER_AUTHORITY=None):
         # Read the generated IDL.
