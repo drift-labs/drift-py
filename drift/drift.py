@@ -26,7 +26,7 @@ class Drift:
 
         # Address of the deployed program.
         self.program_id = PublicKey(CH_PID)
-        self.BOT_AUTHORITY = USER_AUTHORITY
+        self.USER_AUTHORITY = USER_AUTHORITY
 
         
     async def open_position(self):
@@ -47,7 +47,7 @@ class Drift:
         if self.USER_AUTHORITY:
             for user in all_users:
                 user_data = user['account']['data']
-                if str(user_data.authority) == self.BOT_AUTHORITY:
+                if str(user_data.authority) == self.USER_AUTHORITY:
                     # print(user_data.totalTokenDiscount/1e6)
                     bot_position = await program.account['UserPositions'].fetch(user_data.positions)
 
