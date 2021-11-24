@@ -8,11 +8,18 @@ import os
 import pandas as pd
 import numpy as np
 
+from .chmath import calculate_mark_price
+
 IDL_FILE = './drift/clearing_house.json'
 
 # program and state account of clearing house program
 CH_PID = 'dammHkt7jmytvbS3nHTxQNEcP59aE57nxwV21YdqEDN'
 CH_SID = 'FExhvPycCCwYnZGeDsVtLhpEQ3yEkVY2k1HuPyfLj91L'
+
+MARKET_INDEX_TO_PERP = {0:'SOL-PERP',
+                       1:'BTC-PERP',
+                       2:'ETH-PERP',
+                      }
 
 def load_config():
     #todo
@@ -29,6 +36,7 @@ def load_provider():
         return 'https://api.mainnet-beta.solana.com/'
 
 os.environ['ANCHOR_PROVIDER_URL'] = load_provider()
+
     
 class Drift:
     def __init__(self, USER_AUTHORITY=None):
@@ -108,6 +116,74 @@ class Drift:
     def base_asset_imbalance(self, market_index=0):
         market_i = self.mkt_account.markets[market_index]
         return market_i.baseAssetAmount/1e13
+    
+    def market_summary(self):
+        market_cols = ['initialized', 
+               'baseAssetAmountLong', 'baseAssetAmountShort', 'baseAssetAmount', 
+               'openInterest']
+
+        amm_cols = [
+            # '_io',
+            'oracle',
+            # 'oracleSource',
+            'baseAssetReserve',
+               'quoteAssetReserve', 
+            # 'cumulativeRepegRebateLong',
+            #    'cumulativeRepegRebateShort',
+            'cumulativeFundingRateLong',
+               'cumulativeFundingRateShort',
+            'lastFundingRate', 'lastFundingRateTs',
+               # 'fundingPeriod', 
+            'lastOracleMarkSpreadTwap', 'lastMarkPriceTwap',
+               'lastMarkPriceTwapTs', 
+            'sqrtK', 'pegMultiplier', 
+            'totalFee',
+               'totalFeeMinusDistributions', 'totalFeeWithdrawn',
+            # 'minimumTradeSize',
+               # 'padding0', 'padding1', 'padding2', 'padding3', 'padding4'
+        ]
+        mdfs = []
+        for marketIndex, marketName in MARKET_INDEX_TO_PERP.items():
+            market_drift_account = self.mkt_account['markets'][marketIndex]
+            mdf = pd.Series(market_drift_account)[market_cols]
+            for x in ['baseAssetAmountLong', 'baseAssetAmountShort', 'baseAssetAmount']:
+                mdf[x] /= 1e13
+
+            mdf.loc['marketIndex'] = marketIndex
+            mdf.loc['marketName'] = marketName
+
+            amm_drift_account = pd.Series(market_drift_account.amm)
+            # print(amm_drift_account.index)
+            amm_drift_account = amm_drift_account[amm_cols]
+            for x in ['baseAssetReserve', 'quoteAssetReserve', 'sqrtK']:
+                amm_drift_account[x] /= 1e13
+
+            for x in ['totalFee', 'totalFeeMinusDistributions', 'totalFeeWithdrawn']:
+                amm_drift_account[x] /= 1e6
+
+            for x in ['pegMultiplier']:
+                amm_drift_account[x] /= 1e3
+
+            for x in ['cumulativeFundingRateLong', 'cumulativeFundingRateShort', 'lastFundingRate']:
+                amm_drift_account[x] /= 1e14
+
+            for x in ['lastMarkPriceTwap']:
+                amm_drift_account[x] /= 1e10
+
+            mdf = mdf.append(amm_drift_account)
+            
+            markPrice = calculate_mark_price(amm_drift_account['baseAssetReserve'],
+                                                        amm_drift_account['quoteAssetReserve'],
+                                                        amm_drift_account['pegMultiplier'],
+                                                       )
+            print(markPrice)
+            
+            mdf.loc['markPrice'] = markPrice
+
+            mdfs.append(mdf)
+            
+
+        return pd.concat(mdfs, axis=1)
     
 async def __main__():
     # asyncio.run(main()) # for python 
