@@ -7,7 +7,7 @@ def generateGBM(T, mu, sigma, S0, dt):
     Params: 
 
     T: time horizon 
-    mu: drift
+    mu: sdk
     sigma: percentage volatility
     S0: initial price
     dt: size of time steps

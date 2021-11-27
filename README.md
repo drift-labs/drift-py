@@ -1,25 +1,29 @@
-# drift-py
+# Drift-py
 
-WORK IN PROGRESS. THIS CODE CURRENTLY IS FOR INSPECTING/RESEARCH ON DRIFT PROTOCOL.
+A python software developer kit for interacting with the [Drift Protocol](https://www.drift.trade/). The package can
+also be used for research purposes to simulate transactions and events on the protocol, battle-testing it in 
+unique scenarios.
 
-
-### summary
-python research tooling to inspect drift protocol. make sure you understand the risks before using this software.
-
-
-### setup
-within a python virtual environment, run:
-`pip3 install -r requirements.txt`
-
-
-### quick start
+## Setup
+```sh
+pip install -r requirements
 ```
-from drift.drift import Drift
-drift = Drift(USER_AUTHORITY)
-await drift.load()
+## General Usage
+### Instantiating a Client
+```py
+from os import environ
+from drift.sdk.client.sync import DriftClient
+
+# instantiate a client with a private key for your Solana wallet
+drift_client = DriftClient.create(
+    private_key=environ['SOLANA_WALLET_PRIVATE_KEY'], 
+    endpoint='https://api.mainnet-beta.solana.com'
+)
 ```
-
-
-## Disclaimer
-This software is for educational purposes only. Do not risk money which you are afraid to lose. USE THE SOFTWARE AT YOUR OWN RISK. THE AUTHORS AND ALL AFFILIATES ASSUME NO RESPONSIBILITY FOR YOUR RESULTS.
-
+### Reading Protocol Data
+```python
+market = drift_client.get_market(
+    market='SOL-PERP'
+)
+print(market)
+```

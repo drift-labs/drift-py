@@ -10,7 +10,7 @@ import numpy as np
 
 from .chmath import calculate_mark_price
 
-IDL_FILE = './drift/clearing_house.json'
+IDL_FILE = './sdk/clearing_house.json'
 
 # program and state account of clearing house program
 CH_PID = 'dammHkt7jmytvbS3nHTxQNEcP59aE57nxwV21YdqEDN'
