@@ -168,7 +168,7 @@ class Drift:
             "last_funding_rate",
             "last_funding_rate_ts",
             # 'fundingPeriod',
-            "last_oracle_mark_spread_twap",
+            "last_oracle_price_twap",
             "last_mark_price_twap",
             "last_mark_price_twap_ts",
             "sqrt_k",
@@ -222,7 +222,7 @@ class Drift:
             ]:
                 amm_drift_account[x] /= 1e14
 
-            for x in ["last_mark_price_twap"]:
+            for x in ["last_mark_price_twap", "last_oracle_price_twap"]:
                 amm_drift_account[x] /= 1e10
 
             mdf = mdf.append(amm_drift_account)
