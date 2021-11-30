@@ -1,7 +1,7 @@
 from construct import Struct, Int8ul, Flag
 from solana.transaction import TransactionInstruction, AccountMeta
 from solana.publickey import PublicKey
-from drift.instructions.core import InstructionCore
+from sdk.instructions.core import InstructionCore
 
 class InitializeInstruction(InstructionCore):
     layout = Struct(

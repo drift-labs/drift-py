@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 from construct import Container, Struct, Int8ul, Int64ul, Int64sl, Flag, Padding
 
 from solana.publickey import PublicKey
-from drift.layouts import PUBLIC_KEY_LAYOUT, Int128ul, Int128sl, ORACLE_SOURCE_LAYOUT
-from drift.constants import ORACLE_INDEX_TO_SOURCE
-from drift.state.core import ElementCore
+from sdk.layouts import PUBLIC_KEY_LAYOUT, Int128ul, Int128sl, ORACLE_SOURCE_LAYOUT
+from sdk.constants import ORACLE_INDEX_TO_SOURCE
+from sdk.state.core import ElementCore
 
 
 class Fraction(ElementCore):

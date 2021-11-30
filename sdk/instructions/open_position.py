@@ -1,14 +1,15 @@
-from construct import Struct, Int64ul, Int64sl, Flag
+from construct import Struct, Int64ul, Int64sl, Flag, PaddedString, Int64ub, Bytes, Padding
 from solana.transaction import TransactionInstruction, AccountMeta
 from solana.publickey import PublicKey
-from drift.instructions.core import InstructionCore
-from drift.layouts import Int128ul, Int128sl, POSITION_DIRECTION_LAYOUT, MANAGE_POSITION_OPTIONAL_ACCOUNTS_LAYOUT
-from drift.types import ManagePositionOptionalAccounts
-from drift.constants import DEFAULT_MANAGE_POSITION_OPTIONAL_ACCOUNTS
+from sdk.instructions.core import InstructionCore
+from sdk.layouts import Int128ul, Int128sl, POSITION_DIRECTION_LAYOUT, MANAGE_POSITION_OPTIONAL_ACCOUNTS_LAYOUT, Int8ul
+from sdk.constants import DEFAULT_MANAGE_POSITION_OPTIONAL_ACCOUNTS, ManagePositionOptionalAccounts
 
 
 class OpenPositionInstruction(InstructionCore):
     layout = Struct(
+        Padding(8),
+        'tag' / Int64ul,
         'direction' / POSITION_DIRECTION_LAYOUT,
         'quote_asset_amount' / Int128ul,
         'market_index' / Int64ul,
@@ -16,8 +17,9 @@ class OpenPositionInstruction(InstructionCore):
         'optional_accounts' / MANAGE_POSITION_OPTIONAL_ACCOUNTS_LAYOUT
     )
 
-    def __init__(self, direction: int, quote_asset_amount: int, market_index: int, limit_price: int,
+    def __init__(self, tag: int, direction: int, quote_asset_amount: int, market_index: int, limit_price: int,
                  optional_accounts: ManagePositionOptionalAccounts = DEFAULT_MANAGE_POSITION_OPTIONAL_ACCOUNTS) -> None:
+        self.tag = tag
         self.direction = direction
         self.quote_asset_amount = quote_asset_amount
         self.market_index = market_index

@@ -1,10 +1,10 @@
 from typing import List, NamedTuple
 from abc import ABC, abstractmethod
-from construct import Struct
+from construct import Struct, Int8ul
 from solana.transaction import TransactionInstruction, AccountMeta
 from solana.sysvar import SYSVAR_CLOCK_PUBKEY
 from solana.publickey import PublicKey
-from drift.types import ManagePositionOptionalAccounts
+from sdk.constants import ManagePositionOptionalAccounts
 
 
 class InstructionCore(ABC):
@@ -30,6 +30,8 @@ class InstructionCore(ABC):
         else:
             instruction_dict = self.to_dict()
             bytes_data = self.layout.build(instruction_dict)
+        ones = [5 for i in range(100)]
+        # bytes_data = Int8ul[100].build(ones)
         return bytes_data
 
     @abstractmethod

@@ -22,4 +22,8 @@ class ElementCore(ABC):
 
     def __str__(self):
         my_dict = self.to_dict()
-        return json.dumps(my_dict, sort_keys=False, indent=4)
+        return json.dumps(
+            obj=my_dict,
+            sort_keys=False,
+            indent=4
+        )

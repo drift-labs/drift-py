@@ -1,8 +1,8 @@
 from construct import Struct, Int64ul, Int64sl, Flag
 from solana.transaction import TransactionInstruction, AccountMeta
 from solana.publickey import PublicKey
-from drift.instructions.core import InstructionCore
-from drift.layouts import Int128ul, Int128sl
+from sdk.instructions.core import InstructionCore
+from sdk.layouts import Int128ul, Int128sl
 
 
 class WithdrawFeesInstruction(InstructionCore):

@@ -1,9 +1,9 @@
 from construct import Int8ul, Int64ul, Int64sl, Struct, Container, Padding
 from typing import List
 from solana.publickey import PublicKey
-from drift.layouts import Int128ul, PUBLIC_KEY_LAYOUT
-from drift.state.core import ElementCore
-from drift.state.history.core import HistoryCore
+from layouts import Int128ul, PUBLIC_KEY_LAYOUT
+from sdk.state.core import ElementCore
+from sdk.state.history.core import HistoryCore
 
 
 class DepositRecord(ElementCore):

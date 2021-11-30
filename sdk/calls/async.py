@@ -4,8 +4,8 @@ import asyncio
 
 from solana.rpc.async_api import AsyncClient
 from solana.publickey import PublicKey
-from drift.state.all import *
-from drift.constants import *
+from sdk.state.all import *
+from sdk.constants import *
 
 
 async def load_account_bytes(client: AsyncClient, address: PublicKey) -> bytes:

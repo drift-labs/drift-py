@@ -1,8 +1,8 @@
 from construct import Int64ul, Struct, Container, Padding
 from typing import List
-from drift.layouts import Int128ul, Int128sl
-from drift.state.core import ElementCore
-from drift.state.history.core import HistoryCore
+from sdk.layouts import Int128ul, Int128sl
+from sdk.state.core import ElementCore
+from sdk.state.history.core import HistoryCore
 
 
 class CurveRecord(ElementCore):

@@ -1,7 +1,7 @@
 from typing import Literal
 from solana.publickey import PublicKey
 from solana.rpc.api import Client
-from drift.constants import *
+from sdk.constants import *
 
 
 def get_user_account_address(authority: PublicKey) -> PublicKey:
@@ -24,6 +24,7 @@ def get_clearing_house_state_address() -> PublicKey:
     )
     return clearing_house_state_address
 
+
 def position_direction(direction: Literal['long', 'short']) -> PublicKey:
     position_direction_to_int = {
         'long': 0,
@@ -31,6 +32,7 @@ def position_direction(direction: Literal['long', 'short']) -> PublicKey:
     }
     int_direction = position_direction_to_int[direction]
     return int_direction
+
 
 def find_associated_token_address(authority: PublicKey, token_mint_address: PublicKey) -> PublicKey:
     associated_token_address = PublicKey.find_program_address(

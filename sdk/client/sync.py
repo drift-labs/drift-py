@@ -8,11 +8,12 @@ from solana.keypair import Keypair
 from solana.rpc.api import Client
 from solana.rpc.types import RPCResponse
 
-from drift.constants import *
-from drift.state.all import *
-from drift.calls.sync import *
-from drift.sends.sync import *
-from drift.utils import get_user_account_address, position_direction, get_collateral_account_address
+from sdk.constants import *
+from sdk.state.all import *
+from sdk.calls.sync import *
+from sdk.sends.sync import *
+from sdk.utils import get_user_account_address, position_direction, get_collateral_account_address
+
 
 class DriftClient:
 

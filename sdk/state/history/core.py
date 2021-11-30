@@ -1,6 +1,6 @@
 from construct import Container
 
-from drift.state.core import ElementCore
+from sdk.state.core import ElementCore
 
 
 class HistoryCore(ElementCore):

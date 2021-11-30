@@ -3,8 +3,8 @@ from typing import List
 
 from solana.publickey import PublicKey
 
-from drift.layouts import Int128ul, Int128sl, PUBLIC_KEY_LAYOUT
-from drift.state.core import ElementCore
+from sdk.layouts import Int128ul, Int128sl, PUBLIC_KEY_LAYOUT
+from sdk.state.core import ElementCore
 
 
 class UserAccount(ElementCore):
@@ -32,6 +32,9 @@ class UserAccount(ElementCore):
         self.total_referral_reward = total_referral_reward
         self.total_referee_discount = total_referee_discount
         self.positions_account = positions_account
+
+    def activate_precision(self):
+        self.collateral = self.collateral / 1
 
     @classmethod
     def from_container(cls, container: Container):

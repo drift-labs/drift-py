@@ -1,8 +1,45 @@
+from typing import NamedTuple
+
 from solana.rpc.types import TxOpts
 from solana.publickey import PublicKey
 
-from drift.types import ClearingHouseAddresses, HistoryAddresses, MarketBasics, TradeSide, \
-    ManagePositionOptionalAccounts
+
+class HistoryAddresses(NamedTuple):
+    curve: PublicKey
+    deposit: PublicKey
+    funding_payment: PublicKey
+    funding_rate: PublicKey
+    liquidation: PublicKey
+    trade: PublicKey
+
+
+class ClearingHouseAddresses(NamedTuple):
+    admin: PublicKey
+    state: PublicKey
+    program: PublicKey
+    markets: PublicKey
+    collateral_mint: PublicKey
+    collateral_vault: PublicKey
+    collateral_vault_authority: PublicKey
+    insurance_vault: PublicKey
+    insurance_vault_authority: PublicKey
+    history: HistoryAddresses
+    white_list_mint: PublicKey
+    discount_mint: PublicKey
+
+
+class MarketBasics(NamedTuple):
+    name: str
+    base_asset_symbol: str
+    market_index: int
+    devnet_pyth_oracle: PublicKey
+    mainnet_pyth_oracle: PublicKey
+
+
+class ManagePositionOptionalAccounts(NamedTuple):
+    discount_token: bool
+    referrer: bool
+
 
 CURRENT_MARKETS = [
     MarketBasics(
@@ -58,11 +95,47 @@ CLEARING_HOUSE_ADDRESSES = ClearingHouseAddresses(
 MAINNET_ENDPOINT = 'https://api.mainnet-beta.solana.com'
 SERUM_ENDPOINT = 'https://solana-api.projectserum.com'
 
+
+class TradeSide(NamedTuple):
+    none: int
+    sell: int
+    buy: int
+
+
 TRADE_SIDE = TradeSide(
     none=0,
     buy=1,
     sell=2
 )
+
+
+class InstructionTag(NamedTuple):
+    initialize: int
+    initialize_history: int
+    initialize_market: int
+    deposit_collateral: int
+    withdraw_collateral: int
+    open_position: int
+
+
+INSTRUCTION_TAG = InstructionTag(
+    initialize=0,
+    initialize_history=1,
+    initialize_market=2,
+    deposit_collateral=3,
+    withdraw_collateral=4,
+    open_position=5
+)
+
+class InstructionName(NamedTuple):
+    open_position: str
+
+
+INSTRUCTION_NAME = InstructionName(
+    open_position='openPosition'
+)
+
+
 
 MAX_LEVERAGE = 5
 FULL_LIQUIDATION_RATIO = 500

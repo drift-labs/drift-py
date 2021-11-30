@@ -3,8 +3,8 @@ import json
 
 from solana.rpc.api import Client
 from solana.publickey import PublicKey
-from drift.state.all import *
-from drift.constants import *
+from sdk.state.all import *
+from sdk.constants import *
 
 
 def load_account_bytes(client: Client, address: PublicKey) -> bytes:

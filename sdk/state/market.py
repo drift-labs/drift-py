@@ -1,9 +1,9 @@
 from typing import List
 from construct import Struct, Padding, Int8ul, Flag, Int64ul, Int64sl, Container, GreedyRange
 from solana.publickey import PublicKey
-from drift.layouts import PUBLIC_KEY_LAYOUT, Int128ul, Int128sl
-from drift.state.core import ElementCore
-from drift.constants import *
+from sdk.layouts import PUBLIC_KEY_LAYOUT, Int128ul, Int128sl
+from sdk.state.core import ElementCore
+from sdk.constants import *
 
 
 class DriftAmm(ElementCore):

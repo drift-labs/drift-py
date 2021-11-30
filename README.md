@@ -12,7 +12,7 @@ pip install -r requirements
 ### Instantiating a Client
 ```py
 from os import environ
-from drift.sdk.client.sync import DriftClient
+from sdk.client.sync import DriftClient
 
 # instantiate a client with a private key for your Solana wallet
 drift_client = DriftClient.create(
@@ -21,9 +21,8 @@ drift_client = DriftClient.create(
 )
 ```
 ### Reading Protocol Data
+
 ```python
-market = drift_client.get_market(
-    market='SOL-PERP'
-)
+market = drift_client.call_market(,
 print(market)
 ```

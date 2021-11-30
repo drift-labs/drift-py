@@ -6,9 +6,9 @@ from solana.rpc.types import TxOpts, RPCResponse
 from solana.publickey import PublicKey
 from solana.keypair import Keypair
 
-from drift.constants import *
-from drift.instructions.all import *
-from drift.utils import get_user_account_address
+from sdk.constants import *
+from sdk.instructions.all import *
+from sdk.utils import get_user_account_address
 
 
 def sign_and_send_transaction_instructions(client: Client, keypair: Keypair,
@@ -132,6 +132,7 @@ def send_liquidate(client: Client, wallet: Keypair, liquidator: PublicKey, user_
 def send_open_position(client: Client, wallet: Keypair, direction: int, quote_asset_amount: int, market_index: int,
                        limit_price: int, user_positions: PublicKey) -> RPCResponse:
     instruction_object = OpenPositionInstruction(
+        tag=INSTRUCTION_TAG.open_position,
         direction=direction,
         quote_asset_amount=quote_asset_amount,
         market_index=market_index,

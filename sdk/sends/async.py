@@ -8,9 +8,9 @@ from solana.rpc.types import TxOpts, RPCResponse
 from solana.publickey import PublicKey
 from solana.keypair import Keypair
 
-from drift.constants import *
-from drift.instructions.all import *
-from drift.utils import get_user_account_address
+from sdk.constants import *
+from sdk.instructions.all import *
+from sdk.utils import get_user_account_address
 
 
 async def sign_and_send_transaction_instructions(client: AsyncClient, keypair: Keypair,

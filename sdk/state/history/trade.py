@@ -1,9 +1,10 @@
 from construct import Int8ul, Int64ul, Int64sl, Struct, Container, Flag, Padding
 from typing import List
 from solana.publickey import PublicKey
-from drift.layouts import Int128ul, Int128sl, PUBLIC_KEY_LAYOUT
-from drift.state.core import ElementCore
-from drift.state.history.core import HistoryCore
+from sdk.layouts import Int128ul, Int128sl, PUBLIC_KEY_LAYOUT
+from sdk.state.core import ElementCore
+from sdk.state.history.core import HistoryCore
+
 
 class TradeRecord(ElementCore):
     layout = Struct(
