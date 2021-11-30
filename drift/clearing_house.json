@@ -1725,6 +1725,34 @@
   ],
   "types": [
     {
+      "name": "InitializeUserOptionalAccounts",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "whitelistToken",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ManagePositionOptionalAccounts",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "discountToken",
+            "type": "bool"
+          },
+          {
+            "name": "referrer",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
       "name": "CurveRecord",
       "type": {
         "kind": "struct",
@@ -1939,34 +1967,6 @@
       }
     },
     {
-      "name": "InitializeUserOptionalAccounts",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "whitelistToken",
-            "type": "bool"
-          }
-        ]
-      }
-    },
-    {
-      "name": "ManagePositionOptionalAccounts",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "discountToken",
-            "type": "bool"
-          },
-          {
-            "name": "referrer",
-            "type": "bool"
-          }
-        ]
-      }
-    },
-    {
       "name": "LiquidationRecord",
       "type": {
         "kind": "struct",
@@ -2140,7 +2140,7 @@
             "type": "i64"
           },
           {
-            "name": "lastOracleMarkSpreadTwap",
+            "name": "lastOraclePriceTwap",
             "type": "i128"
           },
           {
@@ -2176,8 +2176,12 @@
             "type": "u128"
           },
           {
+            "name": "lastOraclePriceTwapTs",
+            "type": "i64"
+          },
+          {
             "name": "padding0",
-            "type": "u128"
+            "type": "u64"
           },
           {
             "name": "padding1",
@@ -2626,7 +2630,7 @@
     {
       "code": 311,
       "name": "InvalidInitialPeg",
-      "msg": "AMM peg in v0 must be > MANTISSA/10 (e.g. .1)"
+      "msg": "Invalid Initial Peg"
     },
     {
       "code": 312,
@@ -2752,6 +2756,16 @@
       "code": 336,
       "name": "CantDeleteUserWithCollateral",
       "msg": "Can not delete user that still has collateral"
+    },
+    {
+      "code": 337,
+      "name": "InvalidFundingProfitability",
+      "msg": "AMM funding out of bounds pnl"
+    },
+    {
+      "code": 338,
+      "name": "CastingFailure",
+      "msg": "Casting Failure"
     }
   ]
 }
