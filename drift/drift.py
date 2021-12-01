@@ -7,6 +7,7 @@ import anchorpy
 import os
 import pandas as pd
 import numpy as np
+import datetime
 
 from .chmath import calculate_mark_price
 
@@ -58,6 +59,7 @@ class Drift:
         # Address of the deployed program.
         self.program_id = PublicKey(CH_PID)
         self.USER_AUTHORITY = USER_AUTHORITY
+        self.last_update = None
 
     async def open_position(self):
         # Execute the RPC.
@@ -97,6 +99,8 @@ class Drift:
         self.mkt_account = mkt_account
         self.all_users = all_users
         self.bot_position = bot_position
+
+        self.last_update = datetime.datetime.utcnow()
 
     async def load_account(self, key, pubkey):
         # Generate the program client from IDL.
