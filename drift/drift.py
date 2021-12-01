@@ -72,17 +72,21 @@ class Drift:
         program_state_id = PublicKey(CH_SID)
 
         # print('Drift program accounts:', program.account.keys())
-        all_users = await program.account["User"].all()
         bot_position = None
+        all_users = None
+        all_users = await program.account["User"].all()
 
-        if self.USER_AUTHORITY:
-            for user in all_users:
-                user_data = user["account"]["data"]
-                if str(user_data.authority) == self.USER_AUTHORITY:
-                    # print(user_data.totalTokenDiscount/1e6)
-                    bot_position = await program.account["UserPositions"].fetch(
-                        user_data.positions
-                    )
+        # try:
+        #     if self.USER_AUTHORITY:
+        #         for user in all_users:
+        #             user_data = user["account"]["data"]
+        #             if str(user_data.authority) == self.USER_AUTHORITY:
+        #                 # print(user_data.totalTokenDiscount/1e6)
+        #                 bot_position = await program.account["UserPositions"].fetch(
+        #                     user_data.positions
+        #                 )
+        # except:
+        #     pass
 
         account = await program.account["State"].fetch(program_state_id)
         mkt_account = await program.account["Markets"].fetch(account.markets)
@@ -232,7 +236,7 @@ class Drift:
                 amm_drift_account["quote_asset_reserve"],
                 amm_drift_account["peg_multiplier"],
             )
-            print(markPrice)
+            # print(markPrice)
 
             mdf.loc["mark_price"] = markPrice
 
@@ -241,6 +245,8 @@ class Drift:
         return pd.concat(mdfs, axis=1)
 
     def user_summary(self):
+        if self.all_users is None:
+            return pd.DataFrame()
         users_df = pd.DataFrame([x.account.__dict__ for x in self.all_users])
         users_df["public_key"] = pd.Series([x.public_key for x in self.all_users])
 
