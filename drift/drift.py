@@ -166,7 +166,7 @@ class Drift:
         amm_cols = [
             # '_io',
             "oracle",
-            # 'oracleSource',
+            # 'oracle_source',
             "base_asset_reserve",
             "quote_asset_reserve",
             # 'cumulativeRepegRebateLong',
@@ -175,7 +175,7 @@ class Drift:
             "cumulative_funding_rate_short",
             "last_funding_rate",
             "last_funding_rate_ts",
-            # 'fundingPeriod',
+            # 'funding_period',
             "last_oracle_price_twap",
             "last_mark_price_twap",
             "last_mark_price_twap_ts",
@@ -184,7 +184,7 @@ class Drift:
             "total_fee",
             "total_fee_minus_distributions",
             "total_fee_withdrawn",
-            # 'minimumTradeSize',
+            # 'minimum_trade_size',
             # 'padding0', 'padding1', 'padding2', 'padding3', 'padding4'
         ]
         mdfs = []
@@ -279,6 +279,51 @@ class Drift:
 
         return user_summary_df
 
+    async def user_position_summary(self):
+        # if self.all_users is None:
+        #     return pd.DataFrame()
+
+        program = Program(self.idl, self.program_id, Provider.env())
+        all_user_positions = await program.account["UserPositions"].all()
+        position_dfs= {}
+        # return all_user_positions
+        for position in all_user_positions:
+            # print(position)
+            position_df = pd.DataFrame([x.__dict__ for x in list(position.account.positions)])   
+
+            if len(position_df):
+                position_df = position_df[position_df.base_asset_amount != 0]
+
+                for x in ["quote_asset_amount"]:
+                    position_df[x] /= 1e6
+                    position_df[x] = position_df[x].round(2)
+                for x in ["base_asset_amount"]:
+                    position_df[x] /= 1e13
+                for x in ["last_cumulative_funding_rate"]:
+                    position_df[x] /= 1e14
+
+                position_df = position_df[
+                    [
+                        "market_index",
+                        "quote_asset_amount",
+                        "base_asset_amount",
+                        "last_cumulative_funding_rate",
+                    ]
+                ]
+                position_df['entry_price'] = (position_df['quote_asset_amount']/position_df['base_asset_amount']).abs()
+                position_dfs[str(position.account.user)] = position_df
+
+
+        # for x in ['markPriceAfter','markPriceBefore','oraclePrice']:
+        #     trdf[x] /= 1e10
+
+        res = pd.concat(position_dfs, axis=0)
+        res.index.names = ['user_position_pubkey', 'position_index']
+        res = res.reset_index()
+        position_authority = pd.DataFrame([[x.public_key, x.account.authority] 
+        for x in self.all_users], columns=['user_position_pubkey', 'user_authority']).astype(str)
+        positions = position_authority.merge(res, how='outer')
+        return positions
 
 async def __main__():
     # asyncio.run(main()) # for python
