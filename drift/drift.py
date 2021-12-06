@@ -21,6 +21,7 @@ MARKET_INDEX_TO_PERP = {
     0: "SOL-PERP",
     1: "BTC-PERP",
     2: "ETH-PERP",
+    3: "LUNA-PERP",
 }
 
 
