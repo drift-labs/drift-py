@@ -30,8 +30,6 @@ class InstructionCore(ABC):
         else:
             instruction_dict = self.to_dict()
             bytes_data = self.layout.build(instruction_dict)
-        ones = [5 for i in range(100)]
-        # bytes_data = Int8ul[100].build(ones)
         return bytes_data
 
     @abstractmethod

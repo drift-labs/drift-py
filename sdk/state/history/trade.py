@@ -1,3 +1,4 @@
+"""This module models a trade-history buffer account."""
 from construct import Int8ul, Int64ul, Int64sl, Struct, Container, Flag, Padding
 from typing import List
 from solana.publickey import PublicKey
@@ -7,6 +8,7 @@ from sdk.state.history.core import HistoryCore
 
 
 class TradeRecord(ElementCore):
+    """Object to model a single trade record."""
     layout = Struct(
         'ts' / Int64sl,
         'record_id' / Int128ul,
@@ -26,10 +28,12 @@ class TradeRecord(ElementCore):
         'oracle_price' / Int128sl
     )
 
-    def __init__(self, ts: int, record_id: int, user_authority: PublicKey, user: PublicKey, direction: int,
-                 base_asset_amount: int, quote_asset_amount: int, mark_price_before: int, mark_price_after: int,
-                 fee: int, referrer_discount: int, referee_reward: int, token_discount: int, liquidation: bool,
-                 market_index: int, oracle_price: int) -> None:
+    def __init__(
+            self, ts: int, record_id: int, user_authority: PublicKey, user: PublicKey, direction: int,
+            base_asset_amount: int, quote_asset_amount: int, mark_price_before: int, mark_price_after: int,
+            fee: int, referrer_discount: int, referee_reward: int, token_discount: int, liquidation: bool,
+            market_index: int, oracle_price: int
+    ) -> None:
         self.ts = ts
         self.record_id = record_id
         self.user_authority = user_authority
@@ -49,6 +53,7 @@ class TradeRecord(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a trade-record from a container."""
         trade_record = cls(
             ts=container.ts,
             record_id=container.record_id,
@@ -70,6 +75,7 @@ class TradeRecord(ElementCore):
         return trade_record
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'ts': self.ts,
             'record_id': self.record_id,
@@ -92,6 +98,7 @@ class TradeRecord(ElementCore):
 
 
 class TradeHistory(HistoryCore):
+    """Object to model a trade-history buffer account."""
     layout = Struct(
         Padding(8),
         'head' / Int64ul,
@@ -104,6 +111,7 @@ class TradeHistory(HistoryCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a trade-history buffer account from a container."""
         history = cls(
             head=container.head,
             records=[TradeRecord.from_container(c) for c in container.records]

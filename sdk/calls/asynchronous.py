@@ -1,14 +1,19 @@
+"""Asynchronous functions to call Drift protocol related data from the blockchain."""
 import base64
 import json
 import asyncio
 
-from solana.rpc.async_api import AsyncClient
+from solana.rpc.async_api import AsyncClient as SolanaClient
 from solana.publickey import PublicKey
 from sdk.state.all import *
 from sdk.constants import *
 
 
-async def load_account_bytes(client: AsyncClient, address: PublicKey) -> bytes:
+async def load_account_bytes(client: SolanaClient, address: PublicKey) -> bytes:
+    """Call an address and return the account data as bytes.
+
+    :param client: The Solana client object.
+    :param address: The public-key address of the account."""
     resp = await client.get_account_info(pubkey=address)
     if ('result' not in resp) or ('value' not in resp['result']):
         raise Exception('Cannot load bytes.')
@@ -17,8 +22,9 @@ async def load_account_bytes(client: AsyncClient, address: PublicKey) -> bytes:
     return bytes_data
 
 
-async def get_clearing_house(client: AsyncClient, address: PublicKey) -> ClearingHouseState:
+async def call_clearing_house(client: SolanaClient, address: PublicKey) -> ClearingHouseState:
     """Get the Drift protocol clearing house state.
+
     :param client: Solana client object.
     :param address: The public address of the Drift protocol clearing house state."""
     bytes_data = await load_account_bytes(
@@ -29,7 +35,7 @@ async def get_clearing_house(client: AsyncClient, address: PublicKey) -> Clearin
     return clearing_house
 
 
-async def get_markets(client: AsyncClient, address: PublicKey) -> DriftMarkets:
+async def call_markets(client: SolanaClient, address: PublicKey) -> DriftMarkets:
     """Get the Drift protocol markets information.
     :param client: Solana client object.
     :param address: The public address of the Drift protocol markets."""
@@ -41,7 +47,7 @@ async def get_markets(client: AsyncClient, address: PublicKey) -> DriftMarkets:
     return markets
 
 
-async def get_user_account(client: AsyncClient, address: PublicKey) -> UserAccount:
+async def call_user_account(client: SolanaClient, address: PublicKey) -> UserAccount:
     """Get a Drift protocol user account.
     :param client: Solana client object.
     :param address: The public address of the user account."""
@@ -53,7 +59,7 @@ async def get_user_account(client: AsyncClient, address: PublicKey) -> UserAccou
     return user_account
 
 
-async def get_positions_account(client: AsyncClient, address: PublicKey) -> UserPositions:
+async def call_positions_account(client: SolanaClient, address: PublicKey) -> UserPositions:
     """Get a Drift protocol positions account.
     :param client: Solana client object.
     :param address: The public address of the positions account."""
@@ -65,7 +71,8 @@ async def get_positions_account(client: AsyncClient, address: PublicKey) -> User
     return positions_account
 
 
-async def get_curve_history_buffer(client: AsyncClient, address: PublicKey) -> CurveHistory:
+async def call_curve_history_buffer(client: SolanaClient, address: PublicKey) -> CurveHistory:
+    """Get a curve-history buffer account."""
     bytes_data = await load_account_bytes(
         client=client,
         address=address
@@ -74,7 +81,8 @@ async def get_curve_history_buffer(client: AsyncClient, address: PublicKey) -> C
     return curve_history
 
 
-async def get_deposit_history_buffer(client: AsyncClient, address: PublicKey) -> DepositHistory:
+async def call_deposit_history_buffer(client: SolanaClient, address: PublicKey) -> DepositHistory:
+    """Get a deposit-history buffer account."""
     bytes_data = await load_account_bytes(
         client=client,
         address=address
@@ -83,7 +91,8 @@ async def get_deposit_history_buffer(client: AsyncClient, address: PublicKey) ->
     return deposit_history
 
 
-async def get_funding_payment_history_buffer(client: AsyncClient, address: PublicKey) -> FundingPaymentHistory:
+async def get_funding_payment_history_buffer(client: SolanaClient, address: PublicKey) -> FundingPaymentHistory:
+    """Get a funding-payment-history buffer account."""
     bytes_data = await load_account_bytes(
         client=client,
         address=address
@@ -92,7 +101,8 @@ async def get_funding_payment_history_buffer(client: AsyncClient, address: Publi
     return funding_payment_history
 
 
-async def get_funding_rate_history_buffer(client: AsyncClient, address: PublicKey) -> FundingRateHistory:
+async def get_funding_rate_history_buffer(client: SolanaClient, address: PublicKey) -> FundingRateHistory:
+    """Get a funding-rate-history buffer account."""
     bytes_data = await load_account_bytes(
         client=client,
         address=address
@@ -101,7 +111,8 @@ async def get_funding_rate_history_buffer(client: AsyncClient, address: PublicKe
     return funding_rate_history
 
 
-async def get_liquidation_history_buffer(client: AsyncClient, address: PublicKey) -> LiquidationHistory:
+async def get_liquidation_history_buffer(client: SolanaClient, address: PublicKey) -> LiquidationHistory:
+    """Get a liquidation-history buffer account."""
     bytes_data = await load_account_bytes(
         client=client,
         address=address
@@ -110,7 +121,8 @@ async def get_liquidation_history_buffer(client: AsyncClient, address: PublicKey
     return liquidation_history
 
 
-async def get_trade_history_buffer(client: AsyncClient, address: PublicKey) -> TradeHistory:
+async def get_trade_history_buffer(client: SolanaClient, address: PublicKey) -> TradeHistory:
+    """Get a trade-history buffer account."""
     bytes_data = await load_account_bytes(
         client=client,
         address=address

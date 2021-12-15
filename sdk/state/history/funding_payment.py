@@ -1,3 +1,4 @@
+"""This module models a funding-payment-history buffer account."""
 from construct import Int64ul, Int64sl, Struct, Container, Padding
 from typing import List
 from solana.publickey import PublicKey
@@ -7,6 +8,7 @@ from sdk.state.history.core import HistoryCore
 
 
 class FundingPaymentRecord(ElementCore):
+    """Object to model a single funding-payment record."""
     layout = Struct(
         'ts' / Int64sl,
         'record_id' / Int128ul,
@@ -20,9 +22,11 @@ class FundingPaymentRecord(ElementCore):
         'amm_cumulative_funding_short' / Int128sl
     )
 
-    def __init__(self, ts: int, record_id: int, user: PublicKey, market_index: int, funding_payment: int,
-                 base_asset_amount: int, user_last_cumulative_funding: int, user_last_funding_rate_ts: int,
-                 amm_cumulative_funding_long: int, amm_cumulative_funding_short: int) -> None:
+    def __init__(
+            self, ts: int, record_id: int, user: PublicKey, market_index: int, funding_payment: int,
+            base_asset_amount: int, user_last_cumulative_funding: int, user_last_funding_rate_ts: int,
+            amm_cumulative_funding_long: int, amm_cumulative_funding_short: int
+    ) -> None:
         self.ts = ts
         self.record_id = record_id
         self.user = user
@@ -36,10 +40,11 @@ class FundingPaymentRecord(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a funding-payment record from a container."""
         funding_payment_record = cls(
             ts=container.ts,
             record_id=container.record_id,
-            user=PublicKey(container.user),
+            user=container.user,
             market_index=container.market_index,
             funding_payment=container.funding_payment,
             base_asset_amount=container.base_asset_amount,
@@ -51,6 +56,7 @@ class FundingPaymentRecord(ElementCore):
         return funding_payment_record
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'ts': self.ts,
             'record_id': self.record_id,
@@ -67,6 +73,7 @@ class FundingPaymentRecord(ElementCore):
 
 
 class FundingPaymentHistory(HistoryCore):
+    """Object to model a funding-payment-history buffer account."""
     layout = Struct(
         Padding(8),
         'head' / Int64ul,
@@ -79,6 +86,7 @@ class FundingPaymentHistory(HistoryCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a funding-payment-history account from a container."""
         history = cls(
             head=container.head,
             records=[FundingPaymentRecord.from_container(c) for c in container.records]

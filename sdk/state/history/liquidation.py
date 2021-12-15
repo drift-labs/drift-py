@@ -1,3 +1,4 @@
+"""This module models a liquidation-history buffer account."""
 from construct import Int64sl, Struct, Container, Flag, Padding, Int64ul
 from typing import List
 from solana.publickey import PublicKey
@@ -7,6 +8,7 @@ from sdk.state.history.core import HistoryCore
 
 
 class LiquidationRecord(ElementCore):
+    """Object to model a single liquidation record."""
     layout = Struct(
         'ts' / Int64sl,
         'record_id' / Int128ul,
@@ -25,10 +27,12 @@ class LiquidationRecord(ElementCore):
         'margin_ratio' / Int128ul
     )
 
-    def __init__(self, ts: int, record_id: int, user_authority: PublicKey, user: PublicKey, partial: bool,
-                 base_asset_value: int, base_asset_value_closed: int, liquidation_fee: int,
-                 fee_to_liquidator: int, fee_to_insurance_fund: int, liquidator: PublicKey, total_collateral: int,
-                 collateral: int, unrealized_pnl: int, margin_ratio: int) -> None:
+    def __init__(
+            self, ts: int, record_id: int, user_authority: PublicKey, user: PublicKey, partial: bool,
+            base_asset_value: int, base_asset_value_closed: int, liquidation_fee: int,
+            fee_to_liquidator: int, fee_to_insurance_fund: int, liquidator: PublicKey, total_collateral: int,
+            collateral: int, unrealized_pnl: int, margin_ratio: int
+    ) -> None:
         self.ts = ts
         self.record_id = record_id
         self.user_authority = user_authority
@@ -47,6 +51,7 @@ class LiquidationRecord(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a liquidation-record from a container."""
         liquidation_record = cls(
             ts=container.ts,
             record_id=container.record_id,
@@ -67,6 +72,7 @@ class LiquidationRecord(ElementCore):
         return liquidation_record
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'ts': self.ts,
             'record_id': self.record_id,
@@ -87,6 +93,7 @@ class LiquidationRecord(ElementCore):
 
 
 class LiquidationHistory(HistoryCore):
+    """Object to model a liquidation-history buffer account."""
     layout = Struct(
         Padding(8),
         'head' / Int64ul,
@@ -99,6 +106,7 @@ class LiquidationHistory(HistoryCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a liquidation-history account from a container."""
         history = cls(
             head=container.head,
             records=[LiquidationRecord.from_container(c) for c in container.records]

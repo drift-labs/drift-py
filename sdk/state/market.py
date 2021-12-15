@@ -1,3 +1,4 @@
+"""This module models a drift market."""
 from typing import List
 from construct import Struct, Padding, Int8ul, Flag, Int64ul, Int64sl, Container, GreedyRange
 from solana.publickey import PublicKey
@@ -7,6 +8,7 @@ from sdk.constants import *
 
 
 class DriftAmm(ElementCore):
+    """Object to model a drift automatic-market-maker."""
     layout = Struct(
         'oracle' / PUBLIC_KEY_LAYOUT,
         'oracle_source' / Int8ul,
@@ -31,13 +33,14 @@ class DriftAmm(ElementCore):
         Padding(80)
     )
 
-    def __init__(self, oracle: PublicKey, oracle_source: str, base_asset_reserve: int, quote_asset_reserve: int,
-                 cumulative_repeg_rebate_long: int, cumulative_repeg_rebate_short: int,
-                 cumulative_funding_rate_long: int, cumulative_funding_rate_short: int, last_funding_rate: int,
-                 last_funding_rate_ts: int, funding_period: int, last_oracle_mark_spread_twap: int,
-                 last_mark_price_twap: int, last_mark_price_twap_ts: int, sqrt_k: int, peg_multiplier: int,
-                 total_fee: int, total_fee_minus_distributions: int, total_fee_withdrawn: int,
-                 minimum_trade_size: int) -> None:
+    def __init__(
+            self, oracle: PublicKey, oracle_source: str, base_asset_reserve: int, quote_asset_reserve: int,
+            cumulative_repeg_rebate_long: int, cumulative_repeg_rebate_short: int, cumulative_funding_rate_long: int,
+            cumulative_funding_rate_short: int, last_funding_rate: int, last_funding_rate_ts: int,
+            funding_period: int, last_oracle_mark_spread_twap: int, last_mark_price_twap: int,
+            last_mark_price_twap_ts: int, sqrt_k: int, peg_multiplier: int, total_fee: int,
+            total_fee_minus_distributions: int, total_fee_withdrawn: int, minimum_trade_size: int
+    ) -> None:
         self.oracle = oracle
         self.oracle_source = oracle_source
         self.base_asset_reserve = base_asset_reserve
@@ -61,8 +64,9 @@ class DriftAmm(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a drift automatic-market-maker from a container."""
         amm = cls(
-            oracle=PublicKey(container.oracle),
+            oracle=container.oracle,
             oracle_source=ORACLE_INDEX_TO_SOURCE[container.oracle_source],
             base_asset_reserve=container.base_asset_reserve,
             quote_asset_reserve=container.quote_asset_reserve,
@@ -86,6 +90,7 @@ class DriftAmm(ElementCore):
         return amm
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'oracle': self.oracle.__str__(),
             'oracle_source': self.oracle_source,
@@ -111,6 +116,7 @@ class DriftAmm(ElementCore):
         return my_dict
 
     def get_mark_price(self) -> float:
+        """Get the current mark price in the AMM."""
         unpegged_price = self.quote_asset_reserve / self.base_asset_reserve
         pegged_price = unpegged_price * self.peg_multiplier
         mark_price = pegged_price * PRICE_TO_PEG_PRECISION_RATIO / MARK_PRICE_PRECISION
@@ -118,6 +124,7 @@ class DriftAmm(ElementCore):
 
 
 class DriftMarket(ElementCore):
+    """Object to model a drift market."""
     layout = Struct(
         'initialized' / Flag,
         'base_asset_amount_long' / Int128sl,
@@ -128,8 +135,10 @@ class DriftMarket(ElementCore):
         Padding(80)
     )
 
-    def __init__(self, initialized: bool, base_asset_amount_long: int, base_asset_amount_short: int,
-                 base_asset_amount: int, open_interest: int, amm: DriftAmm) -> None:
+    def __init__(
+            self, initialized: bool, base_asset_amount_long: int, base_asset_amount_short: int,
+            base_asset_amount: int, open_interest: int, amm: DriftAmm
+    ) -> None:
         self.initialized = initialized
         self.base_asset_amount_long = base_asset_amount_long
         self.base_asset_amount_short = base_asset_amount_short
@@ -139,6 +148,7 @@ class DriftMarket(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a drift market from a container."""
         drift_market = cls(
             initialized=container.initialized,
             base_asset_amount_long=container.base_asset_amount_long,
@@ -150,6 +160,7 @@ class DriftMarket(ElementCore):
         return drift_market
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'initialized': self.initialized,
             'base_asset_amount_long': self.base_asset_amount_long,
@@ -162,6 +173,7 @@ class DriftMarket(ElementCore):
 
 
 class DriftMarkets(ElementCore):
+    """Object to model the collection of drift-markets."""
     layout = Struct(
         Padding(8),
         'markets' / DriftMarket.layout[NUMBER_OF_CURRENT_MARKETS]
@@ -172,12 +184,14 @@ class DriftMarkets(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create drift-markets from a container."""
         drift_markets = cls(
             markets=[DriftMarket.from_container(dm) for dm in container.markets]
         )
         return drift_markets
 
-    def to_dict(self) -> dict:
-        my_dict = [market.to_dict() for market in self.markets]
-        return my_dict
+    def to_dict(self) -> list:
+        """For pretty printing."""
+        my_list = [market.to_dict() for market in self.markets]
+        return my_list
 

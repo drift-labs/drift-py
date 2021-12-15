@@ -1,24 +1,38 @@
+"""This module models a withdraw-collateral instruction."""
 from construct import Struct, Int64ul, Int64sl, Flag
 from solana.transaction import TransactionInstruction, AccountMeta
 from solana.publickey import PublicKey
 from sdk.instructions.core import InstructionCore
-from sdk.layouts import Int128ul, Int128sl
+from sdk.layouts import Int128ul, Int128sl, INSTRUCTION_NAME_LAYOUT
+from sdk.constants import Number, QUOTE_PRECISION
 
 
 class WithdrawCollateralInstruction(InstructionCore):
+    """Object to model a withdraw-collateral instruction."""
     layout = Struct(
+        'name' / INSTRUCTION_NAME_LAYOUT,
         'amount' / Int64ul
     )
 
     def __init__(self, amount: int) -> None:
+        self.name = 'withdraw_collateral'
         self.amount = amount
 
-    def get_instruction(self, state: PublicKey, user: PublicKey, authority: PublicKey, collateral_vault: PublicKey,
-                        collateral_vault_authority: PublicKey, insurance_vault: PublicKey,
-                        insurance_vault_authority: PublicKey, user_collateral_account: PublicKey,
-                        token_program: PublicKey, markets: PublicKey, user_positions: PublicKey,
-                        funding_payment_history: PublicKey, deposit_history: PublicKey,
-                        program_id: PublicKey) -> TransactionInstruction:
+    @classmethod
+    def from_user_precision(cls, amount: Number):
+        """Handle precision."""
+        instruction_object = cls(
+            amount=round(amount * QUOTE_PRECISION)
+        )
+        return instruction_object
+
+    def get_instruction(
+            self, state: PublicKey, user: PublicKey, authority: PublicKey, collateral_vault: PublicKey,
+            collateral_vault_authority: PublicKey, insurance_vault: PublicKey, insurance_vault_authority: PublicKey,
+            user_collateral_account: PublicKey, token_program: PublicKey, markets: PublicKey, user_positions: PublicKey,
+            funding_payment_history: PublicKey, deposit_history: PublicKey, program_id: PublicKey
+    ) -> TransactionInstruction:
+        """Returns a TransactionInstruction object."""
         bytes_data = self.build()
         account_keys = [
             AccountMeta(

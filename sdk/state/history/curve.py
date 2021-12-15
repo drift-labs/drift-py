@@ -1,3 +1,4 @@
+"""This module models the curve-history buffer account."""
 from construct import Int64ul, Struct, Container, Padding
 from typing import List
 from sdk.layouts import Int128ul, Int128sl
@@ -6,6 +7,7 @@ from sdk.state.history.core import HistoryCore
 
 
 class CurveRecord(ElementCore):
+    """Object to model a single curve-record."""
     layout = Struct(
         'ts' / Int64ul,
         'record_id' / Int128ul,
@@ -27,11 +29,13 @@ class CurveRecord(ElementCore):
         'adjustment_cost' / Int128sl
     )
 
-    def __init__(self, ts: int, record_id: int, market_index: int, peg_multiplier_before: int,
-                 base_asset_reserve_before: int, quote_asset_reserve_before: int, sqrt_k_before: int,
-                 peg_multiplier_after: int, base_asset_reserve_after: int, quote_asset_reserve_after: int,
-                 sqrt_k_after: int, base_asset_amount_long: int, base_asset_amount_short: int, base_asset_amount: int,
-                 open_interest: int, total_fee: int, total_fee_minus_distributions: int, adjustment_cost: int) -> None:
+    def __init__(
+            self, ts: int, record_id: int, market_index: int, peg_multiplier_before: int,
+            base_asset_reserve_before: int, quote_asset_reserve_before: int, sqrt_k_before: int,
+            peg_multiplier_after: int, base_asset_reserve_after: int, quote_asset_reserve_after: int,
+            sqrt_k_after: int, base_asset_amount_long: int, base_asset_amount_short: int, base_asset_amount: int,
+            open_interest: int, total_fee: int, total_fee_minus_distributions: int, adjustment_cost: int
+    ) -> None:
         self.ts = ts
         self.record_id = record_id
         self.market_index = market_index
@@ -53,6 +57,7 @@ class CurveRecord(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a curve-record from a container."""
         curve_record = cls(
             ts=container.ts,
             record_id=container.record_id,
@@ -75,8 +80,8 @@ class CurveRecord(ElementCore):
         )
         return curve_record
 
-
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'ts': self.ts,
             'record_id': self.record_id,
@@ -101,6 +106,7 @@ class CurveRecord(ElementCore):
 
 
 class CurveHistory(HistoryCore):
+    """Object to model a curve-history buffer account."""
     layout = Struct(
         Padding(8),
         'head' / Int64ul,
@@ -113,6 +119,7 @@ class CurveHistory(HistoryCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a curve-history account from a container."""
         history = cls(
             head=container.head,
             records=[CurveRecord.from_container(c) for c in container.records]

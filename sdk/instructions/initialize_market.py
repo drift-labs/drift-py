@@ -1,11 +1,15 @@
+"""This module models an initialize-market instruction."""
 from construct import Struct, Int64ul, Int64sl, Flag
 from solana.transaction import TransactionInstruction, AccountMeta
 from solana.publickey import PublicKey
 from sdk.instructions.core import InstructionCore
-from sdk.layouts import Int128ul, Int128sl
+from sdk.layouts import Int128ul, Int128sl, INSTRUCTION_NAME_LAYOUT
+
 
 class InitializeMarketInstruction(InstructionCore):
+    """Object to model an initialize-market instruction."""
     layout = Struct(
+        'name' / INSTRUCTION_NAME_LAYOUT,
         'market_index' / Int64ul,
         'amm_base_asset_amount' / Int128ul,
         'amm_quote_asset_amount' / Int128ul,
@@ -13,8 +17,11 @@ class InitializeMarketInstruction(InstructionCore):
         'amm_peg_multiplier' / Int128ul
     )
 
-    def __init__(self, market_index: int, amm_base_asset_amount: int, amm_quote_asset_amount: int,
-                 amm_periodicity: int, amm_peg_multiplier: int) -> None:
+    def __init__(
+            self, market_index: int, amm_base_asset_amount: int, amm_quote_asset_amount: int, amm_periodicity: int,
+            amm_peg_multiplier: int
+    ) -> None:
+        self.name = 'initialize_market'
         self.market_index = market_index
         self.amm_base_asset_amount = amm_base_asset_amount
         self.amm_quote_asset_amount = amm_quote_asset_amount

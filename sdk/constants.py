@@ -1,10 +1,17 @@
-from typing import NamedTuple
+"""Constants relating to the drift-protocol."""
+from typing import NamedTuple, Union
 
 from solana.rpc.types import TxOpts
 from solana.publickey import PublicKey
 
+from solana.rpc.api import Commitment
+
+
+Number = Union[int, float]
+
 
 class HistoryAddresses(NamedTuple):
+    """History addresses."""
     curve: PublicKey
     deposit: PublicKey
     funding_payment: PublicKey
@@ -14,6 +21,7 @@ class HistoryAddresses(NamedTuple):
 
 
 class ClearingHouseAddresses(NamedTuple):
+    """Clearing-house addresses."""
     admin: PublicKey
     state: PublicKey
     program: PublicKey
@@ -29,6 +37,7 @@ class ClearingHouseAddresses(NamedTuple):
 
 
 class MarketBasics(NamedTuple):
+    """Market basics."""
     name: str
     base_asset_symbol: str
     market_index: int
@@ -37,6 +46,7 @@ class MarketBasics(NamedTuple):
 
 
 class ManagePositionOptionalAccounts(NamedTuple):
+    """Manage-positional-optional-accounts."""
     discount_token: bool
     referrer: bool
 
@@ -62,11 +72,34 @@ CURRENT_MARKETS = [
         market_index=2,
         devnet_pyth_oracle=PublicKey('EdVCmQ9FSPcVe5YySXDPCRmc8aDQLKJ9xvYBMZPie1Vw'),
         mainnet_pyth_oracle=PublicKey('JBu1AL4obBcCMqKBBxhpWCNUt136ijcuMZLFvTP7iWdB')
+    ),
+    MarketBasics(
+        name='LUNA-PERP',
+        base_asset_symbol='LUNA',
+        market_index=3,
+        devnet_pyth_oracle=PublicKey('8PugCXTAHLM9kfLSQWe2njE5pzAgUdpPk3Nx5zSm7BD3'),
+        mainnet_pyth_oracle=PublicKey('5bmWuR1dgP4avtGYMNKLuxumZTVKGgoN2BCMXWDNL9nY')
+    ),
+    MarketBasics(
+        name='AVAX-PERP',
+        base_asset_symbol='AVAX',
+        market_index=4,
+        devnet_pyth_oracle=PublicKey('FVb5h1VmHPfVb1RfqZckchq18GxRv4iKt8T4eVTQAqdz'),
+        mainnet_pyth_oracle=PublicKey('Ax9ujW5B9oqcv59N8m6f1BpTBq2rGeGaBcpKjC5UYsXU')
+    ),
+    MarketBasics(
+        name='BNB-PERP',
+        base_asset_symbol='BNB',
+        market_index=5,
+        devnet_pyth_oracle=PublicKey('GwzBgrXb4PG59zjce24SF2b9JXbLEjJJTBkmytuEZj1b'),
+        mainnet_pyth_oracle=PublicKey('4CkQJBxhU8EZ2UjhigbtdaPbpTe6mqf811fipYBFbSYN')
     )
 ]
 
 NUMBER_OF_CURRENT_MARKETS = len(CURRENT_MARKETS)
-MARKET_NAME_TO_INDEX = [market.name for market in CURRENT_MARKETS]
+MARKET_INDEX_TO_SYMBOL = [market.name for market in CURRENT_MARKETS]
+MARKET_SYMBOL_TO_INDEX = {symbol: index for (index, symbol) in enumerate(MARKET_INDEX_TO_SYMBOL)}
+print(MARKET_SYMBOL_TO_INDEX)
 
 USDC_MINT = PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
 
@@ -110,6 +143,7 @@ TRADE_SIDE = TradeSide(
 
 
 class InstructionTag(NamedTuple):
+    """Instructino tag."""
     initialize: int
     initialize_history: int
     initialize_market: int
@@ -126,15 +160,6 @@ INSTRUCTION_TAG = InstructionTag(
     withdraw_collateral=4,
     open_position=5
 )
-
-class InstructionName(NamedTuple):
-    open_position: str
-
-
-INSTRUCTION_NAME = InstructionName(
-    open_position='openPosition'
-)
-
 
 
 MAX_LEVERAGE = 5
@@ -197,3 +222,9 @@ DEFAULT_MANAGE_POSITION_OPTIONAL_ACCOUNTS = ManagePositionOptionalAccounts(
     discount_token=False,
     referrer=False
 )
+
+# commitments
+PROCESSED = Commitment('processed')
+CONFIRMED = Commitment('confirmed')
+FINALIZED = Commitment('finalized')
+

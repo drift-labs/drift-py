@@ -1,15 +1,22 @@
+"""Testing the drift client."""
+import asyncio
 from os import environ
-from sdk.client.sync import DriftClient
+from sdk.client import DriftClient
+from sdk.constants import SERUM_ENDPOINT
 
-# instantiate a client with a private key for your Solana wallet
-drift_client = DriftClient.create(
-    private_key=environ['SOLANA_WALLET_PRIVATE_KEY'],
-)
 
-print('client:')
-print(drift_client, '\n')
+async def main():
+	"""Test function."""
+	drift_client = await DriftClient.create(
+		private_key=environ['SOLANA_WALLET_PRIVATE_KEY'],
+		endpoint=SERUM_ENDPOINT
+	)
+	market = await drift_client.get_market(
+		symbol='BNB-PERP'
+	)
+	print(market)
 
-user_account = drift_client.call_user_account(,
+	await drift_client.close()
 
-print('user account:')
-print(user_account)
+if __name__ == '__main__':
+	asyncio.run(main())

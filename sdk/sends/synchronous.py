@@ -28,7 +28,10 @@ def sign_and_send_transaction_instructions(client: Client, keypair: Keypair,
     return response
 
 
-def send_close_position(client: Client, wallet: Keypair, market_index: int, user_positions: PublicKey) -> RPCResponse:
+def send_close_position(
+        client: Client, wallet: Keypair, market_index: int, user_positions: PublicKey
+) -> RPCResponse:
+    """Send a close-position instruction."""
     instruction_object = ClosePositionInstruction(
         market_index=market_index
     )
@@ -36,6 +39,7 @@ def send_close_position(client: Client, wallet: Keypair, market_index: int, user
     transaction_instruction = instruction_object.get_instruction(
         state=CLEARING_HOUSE_ADDRESSES.state,
         user=user,
+        authority=wallet.public_key,
         markets=CLEARING_HOUSE_ADDRESSES.markets,
         user_positions=user_positions,
         trade_history=CLEARING_HOUSE_ADDRESSES.history.trade,
@@ -47,7 +51,7 @@ def send_close_position(client: Client, wallet: Keypair, market_index: int, user
     rpc_response = sign_and_send_transaction_instructions(
         client=client,
         keypair=wallet,
-        transaction_instructions=transaction_instruction
+        transaction_instructions=[transaction_instruction]
     )
     return rpc_response
 
@@ -132,7 +136,7 @@ def send_liquidate(client: Client, wallet: Keypair, liquidator: PublicKey, user_
 def send_open_position(client: Client, wallet: Keypair, direction: int, quote_asset_amount: int, market_index: int,
                        limit_price: int, user_positions: PublicKey) -> RPCResponse:
     instruction_object = OpenPositionInstruction(
-        tag=INSTRUCTION_TAG.open_position,
+        name='openP',
         direction=direction,
         quote_asset_amount=quote_asset_amount,
         market_index=market_index,

@@ -1,3 +1,4 @@
+"""This module models user-accounts for the drift protocol."""
 from construct import Struct, Padding, Container, Int64ul, Int64sl
 from typing import List
 
@@ -8,6 +9,7 @@ from sdk.state.core import ElementCore
 
 
 class UserAccount(ElementCore):
+    """Object to model a user-account."""
     layout = Struct(
         Padding(8),
         'authority' / PUBLIC_KEY_LAYOUT,
@@ -21,9 +23,11 @@ class UserAccount(ElementCore):
         Padding(64)
     )
 
-    def __init__(self, authority: PublicKey, collateral: int, cumulative_deposits: int, total_fee_paid: int,
-                 total_token_discount: int, total_referral_reward: int, total_referee_discount: int,
-                 positions_account: PublicKey) -> None:
+    def __init__(
+            self, authority: PublicKey, collateral: int, cumulative_deposits: int, total_fee_paid: int,
+            total_token_discount: int, total_referral_reward: int, total_referee_discount: int,
+            positions_account: PublicKey
+    ) -> None:
         self.authority = authority
         self.collateral = collateral
         self.cumulative_deposits = cumulative_deposits
@@ -33,24 +37,23 @@ class UserAccount(ElementCore):
         self.total_referee_discount = total_referee_discount
         self.positions_account = positions_account
 
-    def activate_precision(self):
-        self.collateral = self.collateral / 1
-
     @classmethod
     def from_container(cls, container: Container):
+        """Create a user-account from a container."""
         user_account = cls(
-            authority=PublicKey(container.authority),
+            authority=container.authority,
             collateral=container.collateral,
             cumulative_deposits=container.cumulative_deposits,
             total_fee_paid=container.total_fee_paid,
             total_token_discount=container.total_token_discount,
             total_referral_reward=container.total_referral_reward,
             total_referee_discount=container.total_referee_discount,
-            positions_account=PublicKey(container.positions_account)
+            positions_account=container.positions_account
         )
         return user_account
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'authority': self.authority.__str__(),
             'collateral': self.collateral,
@@ -65,6 +68,7 @@ class UserAccount(ElementCore):
 
 
 class MarketPosition(ElementCore):
+    """Object to model a position in a market."""
     layout = Struct(
         'market_index' / Int64ul,
         'base_asset_amount' / Int128sl,
@@ -98,6 +102,7 @@ class MarketPosition(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a market-position from a container."""
         market_position = cls(
             market_index=container.market_index,
             base_asset_amount=container.base_asset_amount,
@@ -109,11 +114,12 @@ class MarketPosition(ElementCore):
             stop_loss_amount=container.stop_loss_amount,
             stop_profit_price=container.stop_profit_price,
             stop_profit_amount=container.stop_profit_amount,
-            transfer_to=PublicKey(container.transfer_to)
+            transfer_to=container.transfer_to
         )
         return market_position
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'market_index': self.market_index,
             'base_asset_amount': self.base_asset_amount,
@@ -131,6 +137,7 @@ class MarketPosition(ElementCore):
 
 
 class UserPositions(ElementCore):
+    """Objecct to model a user-positions account."""
     layout = Struct(
         Padding(8),
         'user' / PUBLIC_KEY_LAYOUT,
@@ -143,6 +150,7 @@ class UserPositions(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a user-positions account from a container."""
         user_positions = cls(
             user=PublicKey(container.user),
             positions=[MarketPosition.from_container(c) for c in container.positions]
@@ -150,6 +158,7 @@ class UserPositions(ElementCore):
         return user_positions
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'user': self.user.__str__(),
             'positions': [position.to_dict() for position in self.positions]

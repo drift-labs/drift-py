@@ -1,21 +1,27 @@
+"""This module models a withdraw-from-insurance-vault instruction."""
 from construct import Struct, Int64ul, Int64sl, Flag
 from solana.transaction import TransactionInstruction, AccountMeta
 from solana.publickey import PublicKey
 from sdk.instructions.core import InstructionCore
-from sdk.layouts import Int128ul, Int128sl
+from sdk.layouts import Int128ul, Int128sl, INSTRUCTION_NAME_LAYOUT
 
 
 class WithdrawFromInsuranceVaultInstruction(InstructionCore):
+    """Object to model a withdraw-from-insurance-vault instruction."""
     layout = Struct(
+        'name' / INSTRUCTION_NAME_LAYOUT,
         'amount' / Int64ul
     )
 
     def __init__(self, amount: int) -> None:
+        self.name = 'withdraw_from_insurance_vault'
         self.amount = amount
 
-    def get_instruction(self, state: PublicKey, admin: PublicKey, insurance_vault: PublicKey,
-                        insurance_vault_authority: PublicKey, recipient: PublicKey, token_program: PublicKey,
-                        program_id: PublicKey) -> TransactionInstruction:
+    def get_instruction(
+            self, state: PublicKey, admin: PublicKey, insurance_vault: PublicKey, insurance_vault_authority: PublicKey,
+            recipient: PublicKey, token_program: PublicKey, program_id: PublicKey
+    ) -> TransactionInstruction:
+        """Returns a TransactionInstruction object."""
         bytes_data = self.build()
         account_keys = [
             AccountMeta(

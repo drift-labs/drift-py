@@ -1,12 +1,14 @@
+"""This module models a deposit-history buffer account."""
 from construct import Int8ul, Int64ul, Int64sl, Struct, Container, Padding
 from typing import List
 from solana.publickey import PublicKey
-from layouts import Int128ul, PUBLIC_KEY_LAYOUT
+from sdk.layouts import Int128ul, PUBLIC_KEY_LAYOUT
 from sdk.state.core import ElementCore
 from sdk.state.history.core import HistoryCore
 
 
 class DepositRecord(ElementCore):
+    """Object to model a single deposit-record."""
     layout = Struct(
         'ts' / Int64sl,
         'record_id' / Int128ul,
@@ -18,8 +20,10 @@ class DepositRecord(ElementCore):
         'amount' / Int64ul
     )
 
-    def __init__(self, ts: int, record_id: int, user_authority: PublicKey, user: PublicKey, direction: int,
-                 collateral_before: int, cumulative_deposits_before: int) -> None:
+    def __init__(
+            self, ts: int, record_id: int, user_authority: PublicKey, user: PublicKey, direction: int,
+            collateral_before: int, cumulative_deposits_before: int
+    ) -> None:
         self.ts = ts
         self.record_id = record_id
         self.user_authority = user_authority
@@ -30,11 +34,12 @@ class DepositRecord(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a curve-record from a container."""
         deposit_record = cls(
             ts=container.ts,
             record_id=container.record_id,
-            user_authority=PublicKey(container.user_authority),
-            user=PublicKey(container.user),
+            user_authority=container.user_authority,
+            user=container.user,
             direction=container.direction,
             collateral_before=container.collateral_before,
             cumulative_deposits_before=container.cumulative_deposits_before
@@ -42,6 +47,7 @@ class DepositRecord(ElementCore):
         return deposit_record
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'ts': self.ts,
             'record_id': self.record_id,
@@ -55,6 +61,7 @@ class DepositRecord(ElementCore):
 
 
 class DepositHistory(HistoryCore):
+    """Object to model a deposit-history buffer account."""
     layout = Struct(
         Padding(8),
         'head' / Int64ul,
@@ -67,6 +74,7 @@ class DepositHistory(HistoryCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a curve-history account from a container."""
         history = cls(
             head=container.head,
             records=[DepositRecord.from_container(c) for c in container.records]

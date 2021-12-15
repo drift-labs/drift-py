@@ -10,14 +10,15 @@ pip install -r requirements
 ```
 ## General Usage
 ### Instantiating a Client
+
 ```py
 from os import environ
-from sdk.client.sync import DriftClient
+from sdk.client import DriftClient
 
 # instantiate a client with a private key for your Solana wallet
 drift_client = DriftClient.create(
-    private_key=environ['SOLANA_WALLET_PRIVATE_KEY'], 
-    endpoint='https://api.mainnet-beta.solana.com'
+	private_key=environ['SOLANA_WALLET_PRIVATE_KEY'],
+	endpoint='https://api.mainnet-beta.solana.com'
 )
 ```
 ### Reading Protocol Data

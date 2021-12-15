@@ -1,16 +1,26 @@
+"""This module models an initialize-history instruction."""
 from construct import Struct, Int8ul, Flag
 from solana.transaction import TransactionInstruction, AccountMeta
 from solana.publickey import PublicKey
 from sdk.instructions.core import InstructionCore
+from sdk.layouts import INSTRUCTION_NAME_LAYOUT
 
 
 class InitializeHistoryInstruction(InstructionCore):
-    layout = Struct()
+    """Object to model an initialize-history instruction."""
+    layout = Struct(
+        'name' / INSTRUCTION_NAME_LAYOUT
+    )
 
-    def get_instruction(self, admin: PublicKey, state: PublicKey, funding_payment_history: PublicKey,
-                        trade_history: PublicKey, liquidation_history: PublicKey, deposit_history: PublicKey,
-                        funding_rate_history: PublicKey, curve_history: PublicKey,
-                        program_id: PublicKey) -> TransactionInstruction:
+    def __init__(self) -> None:
+        self.name = 'initialize_history'
+
+    def get_instruction(
+            self, admin: PublicKey, state: PublicKey, funding_payment_history: PublicKey, trade_history: PublicKey,
+            liquidation_history: PublicKey, deposit_history: PublicKey, funding_rate_history: PublicKey,
+            curve_history: PublicKey, program_id: PublicKey
+    ) -> TransactionInstruction:
+        """Returns a TransactionInstruction object."""
         bytes_data = self.build()
         account_keys = [
             AccountMeta(
@@ -60,4 +70,3 @@ class InitializeHistoryInstruction(InstructionCore):
             data=bytes_data
         )
         return transaction_instruction
-

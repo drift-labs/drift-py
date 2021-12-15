@@ -1,3 +1,4 @@
+"""This module models the Drift clearing house."""
 import json
 
 from abc import ABC, abstractmethod
@@ -10,6 +11,7 @@ from sdk.state.core import ElementCore
 
 
 class Fraction(ElementCore):
+    """Object to model a fraction."""
     layout = Struct(
         'numerator' / Int128ul,
         'denominator' / Int128ul
@@ -21,6 +23,7 @@ class Fraction(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a fraction from a container."""
         fraction = cls(
             numerator=container.numerator,
             denominator=container.denominator
@@ -28,9 +31,11 @@ class Fraction(ElementCore):
         return fraction
 
     def to_float(self):
+        """Get the value of the fraction."""
         return float(self.numerator / self.denominator)
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'numerator': self.numerator,
             'denominator': self.denominator
@@ -39,6 +44,7 @@ class Fraction(ElementCore):
 
 
 class DiscountTokenTier(ElementCore):
+    """Object to model a discount-token-tier."""
     layout = Struct(
         'minimum_balance' / Int64ul,
         'discount' / Fraction.layout
@@ -50,6 +56,7 @@ class DiscountTokenTier(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a discount-token-tier from a container."""
         discount_token_tier = cls(
             minimum_balance=container.minimum_balance,
             discount=Fraction.from_container(container=container.discount)
@@ -57,6 +64,7 @@ class DiscountTokenTier(ElementCore):
         return discount_token_tier
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'minimum_balance': self.minimum_balance,
             'discount': self.discount.to_dict()
@@ -65,6 +73,7 @@ class DiscountTokenTier(ElementCore):
 
 
 class DiscountTokenTiers(ElementCore):
+    """Object to model multiple discount-token-tiers."""
     layout = Struct(
         'first_tier' / DiscountTokenTier.layout,
         'second_tier' / DiscountTokenTier.layout,
@@ -81,6 +90,7 @@ class DiscountTokenTiers(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create multiple discount-token-tiers from a container."""
         discount_token_tiers = cls(
             first_tier=DiscountTokenTier.from_container(container=container.first_tier),
             second_tier=DiscountTokenTier.from_container(container=container.second_tier),
@@ -90,6 +100,7 @@ class DiscountTokenTiers(ElementCore):
         return discount_token_tiers
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'first_tier': self.first_tier.to_dict(),
             'second_tier': self.second_tier.to_dict(),
@@ -100,6 +111,7 @@ class DiscountTokenTiers(ElementCore):
 
 
 class ReferralDiscount(ElementCore):
+    """Object to model a referral-discount."""
     layout = Struct(
         'referrer_reward' / Fraction.layout,
         'referee_discount' / Fraction.layout
@@ -111,6 +123,7 @@ class ReferralDiscount(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a referral-discount from a container."""
         referral_discount = cls(
             referrer_reward=Fraction.from_container(container=container.referrer_reward),
             referee_discount=Fraction.from_container(container=container.referee_discount)
@@ -118,6 +131,7 @@ class ReferralDiscount(ElementCore):
         return referral_discount
 
     def to_dict(self) -> dict:
+        """For pretty-printing."""
         my_dict = {
             'referrer_reward': self.referrer_reward.to_dict(),
             'referee_discount': self.referee_discount.to_dict()
@@ -126,20 +140,23 @@ class ReferralDiscount(ElementCore):
 
 
 class FeeStructure(ElementCore):
+    """Object to model Drift fee-structure."""
     layout = Struct(
         'fee' / Fraction.layout,
         'discount_token_tiers' / DiscountTokenTiers.layout,
         'referral_discount' / ReferralDiscount.layout
     )
 
-    def __init__(self, fee: Fraction, discount_token_tiers: DiscountTokenTier,
-                 referral_discount: ReferralDiscount) -> None:
+    def __init__(
+            self, fee: Fraction, discount_token_tiers: DiscountTokenTiers, referral_discount: ReferralDiscount
+    ) -> None:
         self.fee = fee
         self.discount_token_tiers = discount_token_tiers
         self.referral_discount = referral_discount
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a fee-structure from a container."""
         fee_structure = cls(
             fee=Fraction.from_container(container=container.fee),
             discount_token_tiers=DiscountTokenTiers.from_container(container=container.discount_token_tiers),
@@ -148,6 +165,7 @@ class FeeStructure(ElementCore):
         return fee_structure
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'fee': self.fee.to_dict(),
             'discount_token_tiers': self.discount_token_tiers.to_dict(),
@@ -156,6 +174,7 @@ class FeeStructure(ElementCore):
         return my_dict
 
 class OracleValidity(ElementCore):
+    """Object to model oracle-validity."""
     layout = Struct(
         'slots_before_stale' / Int64sl,
         'confidence_interval_max_size' / Int128ul,
@@ -169,6 +188,7 @@ class OracleValidity(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create an oracle-validity object from a container."""
         oracle_validity = cls(
             slots_before_stale=container.slots_before_stale,
             confidence_interval_max_size=container.confidence_interval_max_size,
@@ -177,6 +197,7 @@ class OracleValidity(ElementCore):
         return oracle_validity
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'slots_before_stale': self.slots_before_stale,
             'confidence_interval_max_size': self.confidence_interval_max_size,
@@ -186,6 +207,7 @@ class OracleValidity(ElementCore):
 
 
 class OracleGuardRails(ElementCore):
+    """Object to model oracle-guard-rails."""
     layout = Struct(
         'price_divergence' / Fraction.layout,
         'validity' / OracleValidity.layout,
@@ -199,6 +221,7 @@ class OracleGuardRails(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create oracle-guard-rails from a container."""
         oracle_guard_rails = cls(
             price_divergence=Fraction.from_container(container=container.price_divergence),
             validity=OracleValidity.from_container(container=container.validity),
@@ -207,6 +230,7 @@ class OracleGuardRails(ElementCore):
         return oracle_guard_rails
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'price_divergence': self.price_divergence.to_dict(),
             'validity': self.validity.to_dict(),
@@ -216,6 +240,7 @@ class OracleGuardRails(ElementCore):
 
 
 class ClearingHouseState(ElementCore):
+    """Object to model the drift clearing-house."""
     layout = Struct(
         Padding(8),
         'admin' / PUBLIC_KEY_LAYOUT,
@@ -252,18 +277,19 @@ class ClearingHouseState(ElementCore):
         Padding(128)
     )
 
-    def __init__(self, admin: PublicKey, exchange_paused: bool, funding_paused: bool, admin_controls_prices: bool,
-                 collateral_mint: PublicKey, collateral_vault: PublicKey, collateral_vault_authority: PublicKey,
-                 collateral_vault_nonce: int, deposit_history: PublicKey, trade_history: PublicKey,
-                 funding_payment_history: PublicKey, funding_rate_history: PublicKey, liquidation_history: PublicKey,
-                 curve_history: PublicKey, insurance_vault: PublicKey, insurance_vault_authority: PublicKey,
-                 insurance_vault_nonce: PublicKey, markets: PublicKey, margin_ratio_initial: int,
-                 margin_ratio_maintenance: int, margin_ratio_partial: int,
-                 partial_liquidation_close_percentage: Fraction, partial_liquidation_penalty_percentage: Fraction,
-                 full_liquidation_penalty_percentage: Fraction, partial_liquidation_liquidator_share_denominator: int,
-                 full_liquidation_liquidator_share_denominator: int, fee_structure: FeeStructure,
-                 white_list_mint: PublicKey, discount_mint: PublicKey,
-                 oracle_guard_rails: OracleGuardRails, max_deposit: int) -> None:
+    def __init__(
+            self, admin: PublicKey, exchange_paused: bool, funding_paused: bool, admin_controls_prices: bool,
+            collateral_mint: PublicKey, collateral_vault: PublicKey, collateral_vault_authority: PublicKey,
+            collateral_vault_nonce: int, deposit_history: PublicKey, trade_history: PublicKey,
+            funding_payment_history: PublicKey, funding_rate_history: PublicKey, liquidation_history: PublicKey,
+            curve_history: PublicKey, insurance_vault: PublicKey, insurance_vault_authority: PublicKey,
+            insurance_vault_nonce: PublicKey, markets: PublicKey, margin_ratio_initial: int,
+            margin_ratio_maintenance: int, margin_ratio_partial: int, partial_liquidation_close_percentage: Fraction,
+            partial_liquidation_penalty_percentage: Fraction, full_liquidation_penalty_percentage: Fraction,
+            partial_liquidation_liquidator_share_denominator: int, full_liquidation_liquidator_share_denominator: int,
+            fee_structure: FeeStructure, white_list_mint: PublicKey, discount_mint: PublicKey,
+            oracle_guard_rails: OracleGuardRails, max_deposit: int
+    ) -> None:
         self.admin = admin
         self.exchange_paused = exchange_paused
         self.funding_paused = funding_paused
@@ -298,25 +324,26 @@ class ClearingHouseState(ElementCore):
 
     @classmethod
     def from_container(cls, container: Container):
+        """Create a clearing-house from a container."""
         clearing_house = cls(
-            admin=PublicKey(container.admin),
+            admin=container.admin,
             exchange_paused=container.exchange_paused,
             funding_paused=container.funding_paused,
             admin_controls_prices=container.admin_controls_prices,
-            collateral_mint=PublicKey(container.collateral_mint),
-            collateral_vault=PublicKey(container.collateral_vault),
-            collateral_vault_authority=PublicKey(container.collateral_vault_authority),
+            collateral_mint=container.collateral_mint,
+            collateral_vault=container.collateral_vault,
+            collateral_vault_authority=container.collateral_vault_authority,
             collateral_vault_nonce=container.collateral_vault_nonce,
-            deposit_history=PublicKey(container.deposit_history),
-            trade_history=PublicKey(container.trade_history),
-            funding_payment_history=PublicKey(container.funding_payment_history),
-            funding_rate_history=PublicKey(container.funding_rate_history),
-            liquidation_history=PublicKey(container.liquidation_history),
-            curve_history=PublicKey(container.curve_history),
-            insurance_vault=PublicKey(container.insurance_vault),
-            insurance_vault_authority=PublicKey(container.insurance_vault_authority),
+            deposit_history=container.deposit_history,
+            trade_history=container.trade_history,
+            funding_payment_history=container.funding_payment_history,
+            funding_rate_history=container.funding_rate_history,
+            liquidation_history=container.liquidation_history,
+            curve_history=container.curve_history,
+            insurance_vault=container.insurance_vault,
+            insurance_vault_authority=container.insurance_vault_authority,
             insurance_vault_nonce=container.insurance_vault_nonce,
-            markets=PublicKey(container.markets),
+            markets=container.markets,
             margin_ratio_initial=container.margin_ratio_initial,
             margin_ratio_maintenance=container.margin_ratio_maintenance,
             margin_ratio_partial=container.margin_ratio_partial,
@@ -332,14 +359,15 @@ class ClearingHouseState(ElementCore):
             partial_liquidation_liquidator_share_denominator=container.partial_liquidation_liquidator_share_denominator,
             full_liquidation_liquidator_share_denominator=container.full_liquidation_liquidator_share_denominator,
             fee_structure=FeeStructure.from_container(container=container.fee_structure),
-            white_list_mint=PublicKey(container.white_list_mint),
-            discount_mint=PublicKey(container.discount_mint),
+            white_list_mint=container.white_list_mint,
+            discount_mint=container.discount_mint,
             oracle_guard_rails=OracleGuardRails.from_container(container=container.oracle_guard_rails),
             max_deposit=container.max_deposit
         )
         return clearing_house
 
     def to_dict(self) -> dict:
+        """For pretty printing."""
         my_dict = {
             'admin': self.admin.__str__(),
             'exchange_paused': self.exchange_paused,

@@ -1,21 +1,28 @@
+"""This module models a liquidate instruction."""
 from construct import Struct, Int64ul, Int64sl, Flag
 from solana.transaction import TransactionInstruction, AccountMeta
 from solana.publickey import PublicKey
 from sdk.instructions.core import InstructionCore
-from sdk.layouts import Int128ul, Int128sl
+from sdk.layouts import Int128ul, Int128sl, INSTRUCTION_NAME_LAYOUT
 
 
 class LiquidateInstruction(InstructionCore):
-    layout = Struct()
+    """Object to model a liquidate instruction."""
+    layout = Struct(
+        'name' / INSTRUCTION_NAME_LAYOUT
+    )
 
     def __init__(self) -> None:
-        pass
+        self.name = 'liquidate'
 
-    def get_instruction(self, state: PublicKey, authority: PublicKey, liquidator: PublicKey, user: PublicKey,
-                        collateral_vault: PublicKey, collateral_vault_authority: PublicKey, insurance_vault: PublicKey,
-                        insurance_vault_authority: PublicKey, token_program: PublicKey, markets: PublicKey,
-                        user_positions: PublicKey, trade_history: PublicKey, liquidation_history: PublicKey,
-                        funding_payment_history: PublicKey, program_id: PublicKey) -> TransactionInstruction:
+    def get_instruction(
+            self, state: PublicKey, authority: PublicKey, liquidator: PublicKey, user: PublicKey,
+            collateral_vault: PublicKey, collateral_vault_authority: PublicKey, insurance_vault: PublicKey,
+            insurance_vault_authority: PublicKey, token_program: PublicKey, markets: PublicKey,
+            user_positions: PublicKey, trade_history: PublicKey, liquidation_history: PublicKey,
+            funding_payment_history: PublicKey, program_id: PublicKey
+    ) -> TransactionInstruction:
+        """Returns a TransactionInstruction object."""
         bytes_data = self.build()
         account_keys = [
             AccountMeta(

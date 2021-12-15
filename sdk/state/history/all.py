@@ -1,3 +1,4 @@
+"""Easy importing."""
 from sdk.state.history.curve import CurveHistory
 from sdk.state.history.deposit import DepositHistory
 from sdk.state.history.funding_payment import FundingPaymentHistory
