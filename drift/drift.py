@@ -23,6 +23,8 @@ MARKET_INDEX_TO_PERP = {
     2: "ETH-PERP",
     3: "LUNA-PERP",
     4: "AVAX-PERP",
+    5: "BNB-PERP",
+
 }
 
 
