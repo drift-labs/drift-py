@@ -5,6 +5,9 @@ also be used for research purposes to simulate transactions and events on the pr
 unique scenarios.
 
 ## Setup
+
+recommend using [`virtualenv`](https://formulae.brew.sh/formula/virtualenv)
+
 ```sh
 virtualenv venv # creates a virtualenv called "venv"
 source venv/bin/activate # uses the virtualenv
