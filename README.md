@@ -6,7 +6,9 @@ unique scenarios.
 
 ## Setup
 ```sh
-pip install -r requirements
+virtualenv venv # creates a virtualenv called "venv"
+source venv/bin/activate # uses the virtualenv
+pip install -r requirements.txt
 ```
 ## General Usage
 ### Instantiating a Client
