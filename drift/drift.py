@@ -25,6 +25,7 @@ MARKET_INDEX_TO_PERP = {
     4: "AVAX-PERP",
     5: "BNB-PERP",
     6: "MATIC-PERP",
+    7: "ATOM-PERP",
 }
 
 
