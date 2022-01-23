@@ -47,7 +47,8 @@ def load_provider():
         return "https://api.mainnet-beta.solana.com/"
 
 
-os.environ["ANCHOR_PROVIDER_URL"] = load_provider()
+if "ANCHOR_PROVIDER_URL" not in os.environ:
+    os.environ["ANCHOR_PROVIDER_URL"] = load_provider()
 
 
 class Drift:
