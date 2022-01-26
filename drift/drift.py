@@ -27,7 +27,7 @@ MARKET_INDEX_TO_PERP = {
     6: "MATIC-PERP",
     7: "ATOM-PERP",
     8: "DOT-PERP",
-
+    9: "ADA-PERP",
 }
 
 
