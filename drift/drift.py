@@ -138,6 +138,9 @@ class Drift:
             "curve": await self.load_account(
                 "CurveHistory", self.state_account.curve_history
             ),
+            "extendedCurve": await self.load_account(
+                "ExtendedCurveHistory", self.state_account.extended_curve_history
+            ),
         }
 
         return history
