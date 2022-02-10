@@ -28,6 +28,8 @@ MARKET_INDEX_TO_PERP = {
     7: "ATOM-PERP",
     8: "DOT-PERP",
     9: "ADA-PERP",
+    10: 'ALGO-PERP',
+    11: 'FTT-PERP'
 }
 
 
