@@ -1,5 +1,7 @@
 # Drift-py
 
+**DEPRECATED** please see https://github.com/drift-labs/driftpy
+
 A python software developer kit for interacting with the [Drift Protocol](https://www.drift.trade/). The package can
 also be used for research purposes to simulate transactions and events on the protocol, battle-testing it in 
 unique scenarios.
