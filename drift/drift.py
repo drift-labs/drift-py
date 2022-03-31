@@ -29,7 +29,11 @@ MARKET_INDEX_TO_PERP = {
     8: "DOT-PERP",
     9: "ADA-PERP",
     10: 'ALGO-PERP',
-    11: 'FTT-PERP'
+    11: 'FTT-PERP',
+    12: 'LTC-PERP',
+    13: 'XRP-PERP',
+    14: 'APE-PERP',
+    15: 'DOGE-PERP'
 }
 
 
@@ -143,7 +147,17 @@ class Drift:
             "extendedCurve": await self.load_account(
                 "ExtendedCurveHistory", self.state_account.extended_curve_history
             ),
+            
         }
+
+        orderState = await self.load_account(
+                "OrderState", self.state_account.order_state
+            )
+
+        history['orderHistory'] =  await self.load_account(
+                "OrderHistory", orderState.order_history
+            )
+
 
         return history
 

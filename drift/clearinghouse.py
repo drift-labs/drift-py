@@ -17,7 +17,7 @@ class ClearingHouseUser:
         return user_data_positions
 
     def user_ch_account(self):
-        user_data_positions = self.user_data["public_key"].values[0]
+        user_data_positions = self.user_data["authority"].values[0]
         return user_data_positions
 
     async def positions(self):
@@ -65,9 +65,9 @@ async def open_position(user, direction, amount, market_index):
         "authority": user.authority,
         "markets": drift.state_account.markets,
         "userPositions": user.user_positions_account(),
-        "tradeHistory": drift.state_account.tradeHistory,
-        "fundingPaymentHistory": drift.state_account.fundingPaymentHistory,
-        "fundingRateHistory": drift.state_account.fundingRateHistory,
+        "tradeHistory": drift.state_account.trade_history,
+        "fundingPaymentHistory": drift.state_account.funding_payment_history,
+        "fundingRateHistory": drift.state_account.funding_rate_history,
         "oracle": drift.mkt_account.markets[0].amm.oracle,
     }
 
