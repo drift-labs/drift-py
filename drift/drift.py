@@ -33,7 +33,9 @@ MARKET_INDEX_TO_PERP = {
     12: 'LTC-PERP',
     13: 'XRP-PERP',
     14: 'APE-PERP',
-    15: 'DOGE-PERP'
+    15: 'DOGE-PERP',
+    16: 'NEAR-PERP',
+    17: 'SRM-PERP',
 }
 
 
