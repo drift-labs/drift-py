@@ -36,6 +36,8 @@ MARKET_INDEX_TO_PERP = {
     15: 'DOGE-PERP',
     16: 'NEAR-PERP',
     17: 'SRM-PERP',
+    18: 'GMT-PERP',
+    19: 'CRV-PERP',
 }
 
 
